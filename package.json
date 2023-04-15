@@ -1,0 +1,42 @@
+{
+	"name": "notion-task-cli",
+	"description": "Add a task to my notion task list",
+	"version": "0.0.1",
+	"license": "MIT",
+	"bin": {
+		"notion-task-cli": "index.js",
+		"ntc": "index.js"
+	},
+	"author": {
+		"name": "Brandon Tor",
+		"email": "btor96@gmail.com",
+		"url": "github.com/brandontor"
+	},
+	"keywords": [
+		"notion-task-cli",
+		"Brandon Tor"
+	],
+	"files": [
+		"index.js",
+		"utils"
+	],
+	"scripts": {
+		"format": "prettier --write \"./**/*.{js,json}\""
+	},
+	"dependencies": {
+		"@notionhq/client": "^2.2.4",
+		"chalk": "^4.1.2",
+		"cli-alerts": "^1.2.2",
+		"cli-handle-error": "^4.4.0",
+		"cli-handle-unhandled": "^1.1.1",
+		"cli-meow-help": "^3.1.0",
+		"cli-welcome": "^2.2.2",
+		"dotenv": "^16.0.3",
+		"inquirer": "^8.2.5",
+		"meow": "^9.0.0",
+		"node-fetch": "^3.3.1"
+	},
+	"devDependencies": {
+		"prettier": "^2.8.7"
+	}
+}
