@@ -1,25 +1,21 @@
-// const {createInterface} = require('readline')
 const { Client } = require('@notionhq/client');
-const inquirer = require('inquirer')
-
-const readline = createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-const readLineAsync = msg => {
-    return new Promise(resolve => {
-      readline.question(msg, userRes => {
-        resolve(userRes);
-      });
-    });
-  }
+const inquirer = require('inquirer');
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 const databaseId = process.env.NOTION_TASK_DATABASE_ID
+const prompt = inquirer.createPromptModule()
 
 
-async function addItem(text) {
+async function addBlankTask() {
+
+  const taskTitle = await prompt({
+    type:"input",
+    name:"taskTitle",
+    message:"What is your task title?"
+  }).then((response) => {
+    return response.taskTitle
+  })
+
     try {
       const response = await notion.pages.create({
         parent: { database_id: databaseId },
@@ -28,12 +24,16 @@ async function addItem(text) {
             title:[
               {
                 "text": {
-                  "content": text
+                  "content": taskTitle
                 }
               }
             ]
           },
-
+          "Date": {
+            date: {
+              start:`${new Date().toISOString()}`,
+            }
+          }
         },
       })
       console.log(response)
@@ -71,12 +71,24 @@ const templateEnum = [
   "No Template"
 ]
 
+
 module.exports = async function notion() {
+    const template = await prompt({
+      type:'confirm',
+      name: 'template',
+      message:"Would you like to build from a template?",
+    }).then((response) => {
+      return response.template
+    })  
 
+    if(template){
+      console.log("Build from template")
+    } else {
+      addBlankTask()
+    }
 
-    const userRes = await readLineAsync(`What is your task title?\r\n`);
-    console.log("")
-    addItem(userRes)
-    readline.close()
+    // console.log("")
+    // addItem(userRes)
+    // readline.close()
     // getTemplate()
 }
