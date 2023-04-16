@@ -1,9 +1,9 @@
 const { Client } = require('@notionhq/client');
 const inquirer = require('inquirer');
 const ora = require('ora');
+const { templateEnum } = require('./templateEnum');
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
-const databaseId = process.env.NOTION_TASK_DATABASE_ID;
 const prompt = inquirer.createPromptModule();
 
 async function addBlankTask() {
@@ -16,8 +16,8 @@ async function addBlankTask() {
 	});
 	const spinner = ora('Creating Task').start();
 	try {
-		const taskResponse = await notion.pages.create({
-			parent: { database_id: databaseId },
+		await notion.pages.create({
+			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
 			properties: {
 				title: {
 					title: [
@@ -36,40 +36,77 @@ async function addBlankTask() {
 			}
 		});
 
-		// console.log(response);
+		const dailyPlannerURL = await notion.pages.retrieve({
+			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
+		});
+
 		spinner.stop();
-		console.log('Success! Entry added.');
-		console.log(taskResponse.parent);
+		console.log('Success! Task added.');
+		console.log(dailyPlannerURL.url);
 	} catch (error) {
 		console.error(error.body);
 	}
 }
 
-async function getTemplate(text) {
+async function addTemplateTask() {
+	const templateTitle = await prompt({
+		type: 'list',
+		message: 'Which template would you like to use?',
+		name: 'templateTitle',
+		choices: Object.keys(templateEnum)
+	}).then(response => {
+		return response.templateTitle;
+	});
+
+	console.log('You chose', templateTitle);
+	console.log('');
+
+	const taskTitle = await prompt({
+		type: 'input',
+		name: 'taskTitle',
+		message: 'What is your task title?'
+	}).then(response => {
+		return response.taskTitle;
+	});
+
+	const spinner = ora('Creating Task').start();
+
 	try {
-		const response = await notion.databases.retrieve({
-			database_id: process.env.NOTION_TASK_DATABASE_ID
+		await notion.pages.create({
+			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
+			icon: {
+				type: templateEnum[templateTitle].icon.type,
+				emoji: templateEnum[templateTitle].icon.emoji
+			},
+			properties: {
+				title: {
+					title: [
+						{
+							text: {
+								content: taskTitle
+							}
+						}
+					]
+				},
+				Date: {
+					date: {
+						start: `${new Date().toISOString()}`
+					}
+				}
+			}
 		});
 
-		const pages = await notion.databases.query({
-			filter: {}
+		const dailyPlannerURL = await notion.pages.retrieve({
+			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
 		});
 
-		console.log(response);
+		spinner.stop();
+		console.log('Success! Task added.');
+		console.log(dailyPlannerURL.url);
 	} catch (e) {
-		console.log(e);
+		console.log('Something went wrong', e);
 	}
 }
-
-const templateEnum = [
-	'Coding',
-	'House Keeping',
-	'Social',
-	'Side Hustle',
-	'Schedule/Reflection',
-	'Work',
-	'No Template'
-];
 
 module.exports = async function notion() {
 	const template = await prompt({
@@ -81,13 +118,8 @@ module.exports = async function notion() {
 	});
 
 	if (template) {
-		console.log('Build from template');
+		addTemplateTask();
 	} else {
 		addBlankTask();
 	}
-
-	// console.log("")
-	// addItem(userRes)
-	// readline.close()
-	// getTemplate()
 };
