@@ -1,10 +1,17 @@
+const { templateEnum } = require('./templateEnum');
 const { Client } = require('@notionhq/client');
+const chalk = require('chalk')
 const inquirer = require('inquirer');
 const ora = require('ora');
-const { templateEnum } = require('./templateEnum');
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 const prompt = inquirer.createPromptModule();
+const spinner = ora({
+	text: "Creating Task",
+	color: "blue",
+	spinner:"moon"
+})
+
 
 async function addBlankTask() {
 	const taskTitle = await prompt({
@@ -14,7 +21,8 @@ async function addBlankTask() {
 	}).then(response => {
 		return response.taskTitle;
 	});
-	const spinner = ora('Creating Task').start();
+
+	spinner.start()
 	try {
 		await notion.pages.create({
 			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
@@ -34,22 +42,21 @@ async function addBlankTask() {
 					}
 				}
 			}
-		});
+		})
 
-		const dailyPlannerURL = await notion.pages.retrieve({
+		const getDailyPlannerURL = await notion.pages.retrieve({
 			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
 		});
-
-		spinner.stop();
-		console.log('Success! Task added.');
-		console.log(dailyPlannerURL.url);
+		spinner.succeed(chalk.green('Success! Task added.'));
+		console.log(chalk.green(getDailyPlannerURL.url));
 	} catch (error) {
+		spinner.fail(chalk.red('Something went wrong'))
 		console.error(error.body);
 	}
 }
 
 async function addTemplateTask() {
-	const templateTitle = await prompt({
+	const getTemplateTitle = await prompt({
 		type: 'list',
 		message: 'Which template would you like to use?',
 		name: 'templateTitle',
@@ -58,10 +65,7 @@ async function addTemplateTask() {
 		return response.templateTitle;
 	});
 
-	console.log('You chose', templateTitle);
-	console.log('');
-
-	const taskTitle = await prompt({
+	const getTaskTitle = await prompt({
 		type: 'input',
 		name: 'taskTitle',
 		message: 'What is your task title?'
@@ -69,21 +73,21 @@ async function addTemplateTask() {
 		return response.taskTitle;
 	});
 
-	const spinner = ora('Creating Task').start();
+	spinner.start();
 
 	try {
 		await notion.pages.create({
 			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
 			icon: {
-				type: templateEnum[templateTitle].icon.type,
-				emoji: templateEnum[templateTitle].icon.emoji
+				type: templateEnum[getTemplateTitle].icon.type,
+				emoji: templateEnum[getTemplateTitle].icon.emoji
 			},
 			properties: {
 				title: {
 					title: [
 						{
 							text: {
-								content: taskTitle
+								content: getTaskTitle
 							}
 						}
 					]
@@ -96,30 +100,28 @@ async function addTemplateTask() {
 			}
 		});
 
-		const dailyPlannerURL = await notion.pages.retrieve({
+		const getDailyPlannerURL = await notion.pages.retrieve({
 			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
 		});
 
-		spinner.stop();
-		console.log('Success! Task added.');
-		console.log(dailyPlannerURL.url);
+		spinner.succeed(chalk.green('Success! Task added.'));
+		console.log(chalk.green(getDailyPlannerURL.url));
 	} catch (e) {
-		console.log('Something went wrong', e);
+		spinner.fail(chalk.red('Something went wrong'))
+		console.log(e);
 	}
 }
 
 module.exports = async function notion() {
-	const template = await prompt({
+	await prompt({
 		type: 'confirm',
 		name: 'template',
 		message: 'Would you like to build from a template?'
 	}).then(response => {
-		return response.template;
+		if (response.template) {
+			addTemplateTask();
+		} else {
+			addBlankTask();
+		}
 	});
-
-	if (template) {
-		addTemplateTask();
-	} else {
-		addBlankTask();
-	}
 };
