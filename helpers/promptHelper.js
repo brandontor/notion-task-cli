@@ -18,13 +18,11 @@ async function welcomePrompt() {
 	const selector = await prompt({
 		type:'list',
 		name:'action',
-		message: "Welcome to the notion task CLI! Would you like to:",
+		message: "Welcome to the notion task CLI! What would you like to do?",
 		choices: Object.keys(optionEnum)
 	})
 
-	const {action} = selector
-
-	return optionEnum[action]
+	return optionEnum[selector.action]
 }
 
 
@@ -55,7 +53,7 @@ async function getTaskTitle() {
 // The return contains the title of the template which can be used but also an icon object which comes from the templateEnum that can be passed to notion for adding icons
 
 async function getTaskTemplate() {
-	const getTemplateTitle = await prompt({
+	const selector = await prompt({
 		type: 'list',
 		message: 'Which template would you like to use?',
 		name: 'templateTitle',
@@ -63,8 +61,8 @@ async function getTaskTemplate() {
 	});
 
 	return {
-		templateTitle: getTemplateTitle.templateTitle,
-		icon: templateEnum[getTemplateTitle.templateTitle].icon
+		templateTitle: selector.templateTitle,
+		icon: templateEnum[selector.templateTitle].icon
 	};
 }
 
@@ -78,9 +76,7 @@ async function selectDatabase() {
 		choices: Object.keys(databases)
 	})
 
-	const {selectedDatabase} = selector
-
-	return selectedDatabase
+	return selector.selectedDatabase
 }
 
 module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt};
