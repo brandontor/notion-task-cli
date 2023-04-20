@@ -8,6 +8,26 @@ const prompt = inquirer.createPromptModule();
 const {getDatabases} = require("./notionHelper")
 const { templateEnum } = require('../utils/templateEnum');
 
+async function welcomePrompt() {
+	const optionEnum = {
+		"Add a task": "Add",
+		"Update a task": "Update",
+		"Retrieve my task(s)": "Get"
+	}
+
+	const selector = await prompt({
+		type:'list',
+		name:'action',
+		message: "Welcome to the notion task CLI! Would you like to:",
+		choices: Object.keys(optionEnum)
+	})
+
+	const {action} = selector
+
+	return optionEnum[action]
+}
+
+
 //Prompt to decide wether we are building a task from a template or not
 async function getTaskType() {
 	const taskType = await prompt({
@@ -57,10 +77,10 @@ async function selectDatabase() {
 		name: 'selectedDatabase', 
 		choices: Object.keys(databases)
 	})
-	
+
 	const {selectedDatabase} = selector
 
 	return selectedDatabase
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase };
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt};
