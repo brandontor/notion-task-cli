@@ -7,7 +7,7 @@ const { Client } = require('@notionhq/client');
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
 
-async function getDatabase() {
+async function getDatabases() {
 	const databases = await notion.search({
         filter: {
             property: "object",
@@ -25,11 +25,11 @@ async function getDatabase() {
        const {id} = response
        const databaseTitle = response.title[0].text.content
        
-       databaseEnum[response.title] = {id, databaseTitle}
+       databaseEnum[databaseTitle] = {id, databaseTitle}
     }
 
     return databaseEnum
 }
 
 
-module.exports = {getDatabase}
+module.exports = {getDatabases}

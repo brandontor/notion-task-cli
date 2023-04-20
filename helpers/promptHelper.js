@@ -5,6 +5,7 @@
 */
 const inquirer = require('inquirer');
 const prompt = inquirer.createPromptModule();
+const {getDatabases} = require("./notionHelper")
 const { templateEnum } = require('../utils/templateEnum');
 
 //Prompt to decide wether we are building a task from a template or not
@@ -47,4 +48,19 @@ async function getTaskTemplate() {
 	};
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType };
+async function selectDatabase() {
+	const databases = await getDatabases()
+
+	const selector = await prompt({
+		type: 'list',
+		message: 'Which database would you like to use?',
+		name: 'selectedDatabase', 
+		choices: Object.keys(databases)
+	})
+	
+	const {selectedDatabase} = selector
+
+	return selectedDatabase
+}
+
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase };
