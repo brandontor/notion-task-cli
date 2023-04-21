@@ -1,101 +1,50 @@
-const { Client } = require('@notionhq/client');
-const {
-	getTaskTitle,
-	getTaskTemplate,
-	getTaskType
-} = require('../helpers/promptHelper');
-const chalk = require('chalk');
-const ora = require('ora');
+const { addBlankTask, getDatabases} = require("../helpers/notionHelper")
+const { selectDatabase,welcomePrompt, getTaskType } = require('../helpers/promptHelper');
 
-const notion = new Client({ auth: process.env.NOTION_KEY });
-const spinner = ora({
-	text: 'Creating Task',
-	color: 'blue',
-	spinner: 'moon'
-});
+async function addTask(db){
+	const taskType = await getTaskType()
+	const {template} = taskType
 
-async function addBlankTask() {
-	const taskTitle = await getTaskTitle();
-	spinner.start();
-
-	try {
-		await notion.pages.create({
-			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
-			properties: {
-				title: {
-					title: [
-						{
-							text: {
-								content: taskTitle
-							}
-						}
-					]
-				},
-				Date: {
-					date: {
-						start: `${new Date().toISOString()}`
-					}
-				}
-			}
-		});
-
-		const getDailyPlannerURL = await notion.pages.retrieve({
-			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
-		});
-		spinner.succeed(chalk.green('Success! Task added.'));
-		console.log(chalk.green(getDailyPlannerURL.url));
-	} catch (error) {
-		spinner.fail(chalk.red('Something went wrong'));
-		console.error(error.body);
-	}
-}
-
-async function addTemplateTask() {
-	const template = await getTaskTemplate();
-	const taskTitle = await getTaskTitle();
-
-	spinner.start();
-
-	try {
-		await notion.pages.create({
-			parent: { database_id: process.env.NOTION_TASK_DATABASE_ID },
-			icon: template.icon,
-			properties: {
-				title: {
-					title: [
-						{
-							text: {
-								content: taskTitle
-							}
-						}
-					]
-				},
-				Date: {
-					date: {
-						start: `${new Date().toISOString()}`
-					}
-				}
-			}
-		});
-
-		const getDailyPlannerURL = await notion.pages.retrieve({
-			page_id: process.env.NOTION_DAILY_PLANNER_PAGE_ID
-		});
-
-		spinner.succeed(chalk.green('Success! Task added.'));
-		console.log(chalk.green(getDailyPlannerURL.url));
-	} catch (e) {
-		spinner.fail(chalk.red('Something went wrong'));
-		console.log(e);
-	}
-}
-
-module.exports = async function notion() {
-	const { template } = await getTaskType();
-
-	if (template) {
-		addTemplateTask();
+	if(!template) {
+		await addBlankTask(db)
 	} else {
-		addBlankTask();
+		console.log("Create a blank task")
+	}
+}
+
+async function readTask(db) {
+	
+}
+
+async function updateTask(db) {
+
+}
+
+const actionEnum = {
+	"Add": (db) => {
+		addTask(db)
+	},
+	"Read": (db) => {
+		readTask(db)
+	},
+	"Update" :(db) => {
+		updateTask(db)
+	}
+}
+
+module.exports = async function notion(flag) {
+
+	// if(!flag) {
+	// 	console.log("There was a flag")
+	// }
+
+	try{
+		const selectedAction = await welcomePrompt()
+		const databases = await getDatabases()
+		const selectedDatabase = await selectDatabase(databases)
+		actionEnum[selectedAction](selectedDatabase)
+	} catch(e) {
+		console.log(e)
+		process.exit(1)
 	}
 };
