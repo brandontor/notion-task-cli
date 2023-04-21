@@ -69,7 +69,7 @@ async function addBlankTask(db) {
       },
       Date: {
         date: {
-          start: `${new Date().toISOString()}`
+          start: `${new Date().toISOString().substring(0, 10)}`
         }
       }
     }
@@ -104,7 +104,7 @@ async function addTemplateTask(db) {
       },
       Date: {
         date: {
-          start: `${new Date().toISOString()}`
+          start: `${new Date().toISOString().substring(0, 10)}`
         }
       }
     }
@@ -115,9 +115,31 @@ async function addTemplateTask(db) {
 
   spinner.succeed(chalk.green('Success! Task added.'));
   console.log(chalk.green(response.url));
-
 }
 
-module.exports = { getDatabases, addBlankTask, addTemplateTask }
+
+async function getTasks(db) {
+  spinner.start("Fetching your tasks ....")
+
+  const response = await notion.databases.query({
+    database_id: db.id,
+    filter:{
+      property: "Date",
+      date: {
+        equals: `${new Date().toISOString().substring(0, 10)}`
+      }
+      
+
+    }
+  }).catch((error) => {
+    spinner.fail("There was an error fetching tasks")
+    throw new Error(error)
+  })
+
+  spinner.succeed("Success! Here are your tasks:")
+  console.log(response)
+}
+
+module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks }
 
 

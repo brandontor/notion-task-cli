@@ -1,4 +1,4 @@
-const { addBlankTask, getDatabases, addTemplateTask} = require("../helpers/notionHelper")
+const { addBlankTask, getDatabases, addTemplateTask, getTasks} = require("../helpers/notionHelper")
 const { selectDatabase,welcomePrompt, getTaskType } = require('../helpers/promptHelper');
 
 async function addTask(db){
@@ -13,7 +13,7 @@ async function addTask(db){
 }
 
 async function readTask(db) {
-	
+	await getTasks(db)
 }
 
 async function updateTask(db) {
@@ -24,7 +24,7 @@ const actionEnum = {
 	"Add": (db) => {
 		addTask(db)
 	},
-	"Read": (db) => {
+	"Get": (db) => {
 		readTask(db)
 	},
 	"Update" :(db) => {
