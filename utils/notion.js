@@ -1,4 +1,4 @@
-const { addBlankTask, getDatabases} = require("../helpers/notionHelper")
+const { addBlankTask, getDatabases, addTemplateTask} = require("../helpers/notionHelper")
 const { selectDatabase,welcomePrompt, getTaskType } = require('../helpers/promptHelper');
 
 async function addTask(db){
@@ -8,7 +8,7 @@ async function addTask(db){
 	if(!template) {
 		await addBlankTask(db)
 	} else {
-		console.log("Create a blank task")
+		addTemplateTask(db)
 	}
 }
 
