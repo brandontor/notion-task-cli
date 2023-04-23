@@ -136,20 +136,20 @@ async function getTasks(db) {
 
 
   spinner.succeed(chalk.green("Success! Here are your tasks: \n"))
-  if (response.results.length > 0) {
-    response.results.forEach((task) => {
-      const result = {
-        emoji: task.icon.emoji,
-        title: task.properties.Name.title[0].plain_text,
-        status: task.properties.Status.checkbox ? `[ x ]` : `[ ]`
-      }
-      console.log(`${result.emoji} ${result.title}`, chalk.dim(result.status))
-    })
-  } else {
-    console.log("No tasks available")
-  }
+  
+  return response 
 }
 
-module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks }
+
+async function _updateTask (db) {
+  const tasks = await getTasks(db)  
+
+  if(!tasks) {
+    process.exit(1)
+  } 
+
+
+}
+module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, _updateTask }
 
 

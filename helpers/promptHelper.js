@@ -79,4 +79,16 @@ async function selectDatabase(databases) {
 	return databases[selectedDatabase]
 }
 
+async function selectTaskForUpdate(tasks) {
+	
+	const selector = await prompt({
+		type: 'list',
+		message: 'Which task would you like to update?',
+		name:"selectedTask",
+		choices: tasks
+	})
+
+	return selector.selectedTask
+}
+
 module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt};
