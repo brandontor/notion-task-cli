@@ -128,16 +128,26 @@ async function getTasks(db) {
       date: {
         equals: `${new Date().toISOString().substring(0, 10)}`
       }
-      
-
     }
   }).catch((error) => {
     spinner.fail("There was an error fetching tasks")
     throw new Error(error)
   })
 
-  spinner.succeed("Success! Here are your tasks:")
-  console.log(response)
+
+  spinner.succeed(chalk.green("Success! Here are your tasks: \n"))
+  if (response.results.length > 0) {
+    response.results.forEach((task) => {
+      const result = {
+        emoji: task.icon.emoji,
+        title: task.properties.Name.title[0].plain_text,
+        status: task.properties.Status.checkbox ? `[ x ]` : `[ ]`
+      }
+      console.log(`${result.emoji} ${result.title}`, chalk.dim(result.status))
+    })
+  } else {
+    console.log("No tasks available")
+  }
 }
 
 module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks }
