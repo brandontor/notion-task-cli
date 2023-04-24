@@ -1,15 +1,15 @@
 const { addBlankTask, getDatabases, addTemplateTask, getTasks, _updateTask } = require("../helpers/notionHelper")
-const { selectDatabase, welcomePrompt, getTaskType } = require('../helpers/promptHelper');
+const { selectDatabase, welcomePrompt, getTaskType, selectTaskForUpdate } = require('../helpers/promptHelper');
 
 function displayTasks(tasks) {
 
 	tasks.results.forEach((task) => {
 		const result = {
-			emoji: task.icon.emoji,
+			emoji: task.icon?.emoji,
 			title: task.properties.Name.title[0].plain_text,
 			status: task.properties.Status.checkbox ? `[ x ]` : `[ ]`
 		}
-		console.log(`${result.emoji} ${result.title}`, chalk.dim(result.status))
+		console.log(`${result.emoji} ${result.title}`, result.status)
 	})
 
 }
@@ -38,7 +38,20 @@ async function readTask(db) {
 }
 
 async function updateTask(db) {
-	await _updateTask(db)
+	const tasks = await getTasks(db)
+	const taskEnum = {}
+
+	for(let task of tasks.results) {
+		const emoji = task.icon?.emoji
+		const title = task.properties.Name.title[0].plain_text
+		const status = task.properties.Status.checkbox ? `[ x ]` : `[ ]`
+		const key = `${emoji} ${title}`
+
+		taskEnum[`${key}`] = {emoji,title,status,key}
+	}
+
+	const selectedTask = await selectTaskForUpdate(taskEnum)
+	console.log("This was the selected task", selectedTask)
 }
 
 const actionEnum = {

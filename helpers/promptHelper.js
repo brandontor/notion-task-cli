@@ -80,15 +80,15 @@ async function selectDatabase(databases) {
 }
 
 async function selectTaskForUpdate(tasks) {
-	
+
 	const selector = await prompt({
 		type: 'list',
 		message: 'Which task would you like to update?',
 		name:"selectedTask",
-		choices: tasks
+		choices: Object.keys(tasks)
 	})
 
-	return selector.selectedTask
+	return tasks[selector.selectedTask]
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt};
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate};

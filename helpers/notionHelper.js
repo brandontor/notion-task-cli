@@ -134,15 +134,13 @@ async function getTasks(db) {
     throw new Error(error)
   })
 
-
   spinner.succeed(chalk.green("Success! Here are your tasks: \n"))
-  
+
   return response 
 }
 
 
 async function _updateTask (db) {
-  const tasks = await getTasks(db)  
 
   if(!tasks) {
     process.exit(1)
