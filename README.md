@@ -1,10 +1,13 @@
 # notion-task-cli
 
+### STILL A WIP Please dont try to install yet
 
 ## Table of Contents
 
 
+
 - [notion-task-cli](#notion-task-cli)
+    - [STILL A WIP Please dont try to install yet](#still-a-wip-please-dont-try-to-install-yet)
   - [Table of Contents](#table-of-contents)
 - [Why?](#why)
 - [Installation](#installation)
@@ -14,7 +17,7 @@
 
 # Why? 
 
-I :heart: Notion, and if you're here then you probably do too. 
+I :heart: Notion ESPECIALLY as a task manager, and if you're here then you maybe you do too. 
 
 Also maybe like you, I get distracted easily, and because of this i'm afraid to leave my code editor.
 
@@ -29,7 +32,7 @@ npm install --global notion-task-cli
 
 In order to utilize your notion databases you will need to access your notion API key and add database integrations. 
 
-Please check out these [docs](https://developers.notion.com/docs/create-a-notion-integration) from Notion on how to set this up.
+Please refer to the [docs](https://developers.notion.com/docs/create-a-notion-integration) from Notion on how to set this up.
 
 # Usage
 
@@ -38,9 +41,17 @@ Create a .env and add your Notion API key
 You can use .env.example as a reference. 
 ```
 
+Commands 
+
+```
+npm ntc -a 
+```
+
+This will fire up the CLI
+
 # License
 
 [(Back to top)](#table-of-contents)
 
 
-The MIT License (MIT) 2017 - [Brandon Tor](https://github.com/brandontor/). Please have a look at the [LICENSE.md](LICENSE.md) for more details.
+The MIT License (MIT) 2023 - [Brandon Tor](https://github.com/brandontor/). Please have a look at the [LICENSE.md](LICENSE.md) for more details.
