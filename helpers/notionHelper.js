@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const { Client } = require('@notionhq/client');
-const { getTaskTitle, getTaskTemplate } = require('./promptHelper')
+const { getTaskTitle, getTaskTemplate, updateTaskPrompt } = require('./promptHelper')
 
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
@@ -140,14 +140,13 @@ async function getTasks(db) {
 }
 
 
-async function _updateTask (db) {
+async function updateTaskProperty (task) {
 
-  if(!tasks) {
-    process.exit(1)
-  } 
+  console.log("Here is my task", task)
 
-
+  const selectedUpdateAction = await updateTaskPrompt()
+  console.log("This is the action I would like to take", selectedUpdateAction)
 }
-module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, _updateTask }
+module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, updateTaskProperty }
 
 

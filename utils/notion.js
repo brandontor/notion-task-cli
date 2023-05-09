@@ -1,4 +1,4 @@
-const { addBlankTask, getDatabases, addTemplateTask, getTasks, _updateTask } = require("../helpers/notionHelper")
+const { addBlankTask, getDatabases, addTemplateTask, getTasks, updateTaskProperty } = require("../helpers/notionHelper")
 const { selectDatabase, welcomePrompt, getTaskType, selectTaskForUpdate } = require('../helpers/promptHelper');
 
 function displayTasks(tasks) {
@@ -46,12 +46,15 @@ async function updateTask(db) {
 		const title = task.properties.Name.title[0].plain_text
 		const status = task.properties.Status.checkbox ? `[ x ]` : `[ ]`
 		const key = `${emoji} ${title}`
+		const id = task.id
 
-		taskEnum[`${key}`] = {emoji,title,status,key}
+		taskEnum[`${key}`] = {emoji,title,status,key, id}
 	}
 
 	const selectedTask = await selectTaskForUpdate(taskEnum)
-	console.log("This was the selected task", selectedTask)
+
+	updateTaskProperty(selectedTask)
+	
 }
 
 const actionEnum = {

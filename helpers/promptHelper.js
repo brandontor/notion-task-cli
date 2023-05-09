@@ -91,4 +91,15 @@ async function selectTaskForUpdate(tasks) {
 	return tasks[selector.selectedTask]
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate};
+async function updateTaskPrompt() {
+	const selector = await prompt({
+		type: 'list',
+		message: 'What action would you like to perform?',
+		name: 'selectedUpdateAction',
+		choices: ["Mark as complete", "Delete Task", "Change Task Title"]
+	})
+
+	return selector.selectedUpdateAction
+}
+
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateTaskPrompt};
