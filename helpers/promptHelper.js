@@ -91,7 +91,7 @@ async function selectTaskForUpdate(tasks) {
 	return tasks[selector.selectedTask]
 }
 
-async function updateTaskPrompt() {
+async function updateActionPrompt() {
 	const selector = await prompt({
 		type: 'list',
 		message: 'What action would you like to perform?',
@@ -102,4 +102,4 @@ async function updateTaskPrompt() {
 	return selector.selectedUpdateAction
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateTaskPrompt};
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateActionPrompt};

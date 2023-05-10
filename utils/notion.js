@@ -1,4 +1,4 @@
-const { addBlankTask, getDatabases, addTemplateTask, getTasks, updateTaskProperty } = require("../helpers/notionHelper")
+const { addBlankTask, getDatabases, addTemplateTask, getTasks, updateWithSelectedAction } = require("../helpers/notionHelper")
 const { selectDatabase, welcomePrompt, getTaskType, selectTaskForUpdate } = require('../helpers/promptHelper');
 
 function displayTasks(tasks) {
@@ -61,7 +61,7 @@ async function updateTask(db) {
 
 	const selectedTask = await selectTaskForUpdate(taskEnum)
 
-	updateTaskProperty(selectedTask)
+	updateWithSelectedAction(selectedTask)
 	
 }
 

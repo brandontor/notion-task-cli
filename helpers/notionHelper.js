@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const { Client } = require('@notionhq/client');
-const { getTaskTitle, getTaskTemplate, updateTaskPrompt } = require('./promptHelper')
+const { getTaskTitle, getTaskTemplate, updateActionPrompt } = require('./promptHelper')
 
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
@@ -143,14 +143,34 @@ async function getTasks(db) {
   return response 
 }
 
+async function markTaskComplete(task) {
 
-async function updateTaskProperty (task) {
-
-  console.log("Here is my task", task)
-
-  const selectedUpdateAction = await updateTaskPrompt()
-  console.log("This is the action I would like to take", selectedUpdateAction)
+  return console.log("Task Completed")  
 }
-module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, updateTaskProperty }
+
+async function deleteTask(task) {
+
+  return console.log("Task Deleted")  
+}
+
+async function updateTaskTitle(task) {
+
+  return console.log("Task Title Updated")  
+}
+
+async function updateWithSelectedAction (task) {
+
+  const updateActionTypeEnum = {
+    "Mark as complete": markTaskComplete,
+    "Delete Task": deleteTask,
+    "Change Task Title": updateTaskTitle
+  }
+
+  //Return one of ["Mark as complete", "Delete Task", "Change Task Title"]
+  const selectedUpdateAction = await updateActionPrompt()
+
+  updateActionTypeEnum[selectedUpdateAction](task)
+}
+module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, updateWithSelectedAction }
 
 
