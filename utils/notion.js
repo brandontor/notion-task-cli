@@ -32,7 +32,7 @@ async function readTask(db) {
 		displayTasks(tasks)
 	} else {
 		console.log("No tasks available")
-		return null
+		process.exit(0)
 	}
 
 }
@@ -78,10 +78,6 @@ const actionEnum = {
 }
 
 module.exports = async function notion(flag) {
-
-	// if(!flag) {
-	// 	console.log("There was a flag")
-	// }
 
 	try {
 		const selectedAction = await welcomePrompt()

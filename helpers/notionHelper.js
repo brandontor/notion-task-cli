@@ -75,6 +75,9 @@ async function addBlankTask(db) {
         date: {
           start: `${new Date().toISOString().substring(0, 10)}`
         }
+      },
+      Status: {
+        checkbox: false
       }
     }
   }).catch(error => {
@@ -105,6 +108,9 @@ async function addTemplateTask(db) {
             }
           }
         ]
+      },
+      Status: {
+        checkbox: false
       },
       Date: {
         date: {
@@ -144,16 +150,32 @@ async function getTasks(db) {
 }
 
 async function markTaskComplete(task) {
+  spinner.start("Updating task ....")
 
-  return console.log("Task Completed")  
+  const response = await notion.pages.update({
+    page_id: task.id,
+    properties: {
+      Status: {
+        checkbox: true
+      }, 
+    }
+  }).catch(error => {
+    spinner.fail(chalk.red('Something went wrong'));
+    throw new Error(error)
+  });
+
+  spinner.succeed(chalk.green("Success! Here is your task: \n"))
+  return console.log(chalk.green(response.url))  
 }
 
 async function deleteTask(task) {
+  console.log("Here is task", task)
 
   return console.log("Task Deleted")  
 }
 
 async function updateTaskTitle(task) {
+  console.log("Here is task", task)
 
   return console.log("Task Title Updated")  
 }
