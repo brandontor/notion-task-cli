@@ -39,6 +39,11 @@ async function readTask(db) {
 
 async function updateTask(db) {
 	const tasks = await getTasks(db)
+	if(tasks.results.length <= 0){
+		console.log("There are no tasks to update")
+		process.exit(0)
+	}
+	
 	const taskEnum = {}
 
 	for(let task of tasks.results) {
