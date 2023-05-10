@@ -39,13 +39,16 @@ async function readTask(db) {
 
 async function updateTask(db) {
 	const tasks = await getTasks(db)
+
+	//If there are no tasks available to update then exit the process
 	if(tasks.results.length <= 0){
 		console.log("There are no tasks to update")
 		process.exit(0)
 	}
 	
-	const taskEnum = {}
 
+	//Loop over your tasks and build and enum to pass to the prompt selector
+	const taskEnum = {}
 	for(let task of tasks.results) {
 		const emoji = task.icon?.emoji
 		const title = task.properties.Name.title[0].plain_text

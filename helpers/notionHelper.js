@@ -30,6 +30,10 @@ async function getDatabases() {
     throw new Error(e)
   })
 
+  if(databases.results.length <= 0) {
+    throw new Error("There are no databases available. Please integrate a database to your notion API Key.")
+  }
+
   const databaseEnum = {}
 
   for (let database of databases.results) {
