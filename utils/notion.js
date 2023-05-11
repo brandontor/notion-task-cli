@@ -1,4 +1,4 @@
-const { addBlankTask, getDatabases, addTemplateTask, getTasks, _updateTask } = require("../helpers/notionHelper")
+const { addBlankTask, getDatabases, addTemplateTask, getTasks, updateWithSelectedAction } = require("../helpers/notionHelper")
 const { selectDatabase, welcomePrompt, getTaskType, selectTaskForUpdate } = require('../helpers/promptHelper');
 
 function displayTasks(tasks) {
@@ -31,27 +31,38 @@ async function readTask(db) {
 	if (tasks.results.length > 0) {
 		displayTasks(tasks)
 	} else {
-		console.log("No tasks available")
-		return null
+		console.log("No tasks exist, please create a new task")
+		process.exit(0)
 	}
 
 }
 
 async function updateTask(db) {
 	const tasks = await getTasks(db)
-	const taskEnum = {}
 
+	//If there are no tasks available to update then exit the process
+	if(tasks.results.length <= 0){
+		console.log("There are no tasks to update")
+		process.exit(0)
+	}
+	
+
+	//Loop over your tasks and build and enum to pass to the prompt selector
+	const taskEnum = {}
 	for(let task of tasks.results) {
 		const emoji = task.icon?.emoji
 		const title = task.properties.Name.title[0].plain_text
 		const status = task.properties.Status.checkbox ? `[ x ]` : `[ ]`
 		const key = `${emoji} ${title}`
+		const id = task.id
 
-		taskEnum[`${key}`] = {emoji,title,status,key}
+		taskEnum[`${key}`] = {emoji,title,status,key, id}
 	}
 
 	const selectedTask = await selectTaskForUpdate(taskEnum)
-	console.log("This was the selected task", selectedTask)
+
+	updateWithSelectedAction(selectedTask)
+	
 }
 
 const actionEnum = {
@@ -67,10 +78,6 @@ const actionEnum = {
 }
 
 module.exports = async function notion(flag) {
-
-	// if(!flag) {
-	// 	console.log("There was a flag")
-	// }
 
 	try {
 		const selectedAction = await welcomePrompt()

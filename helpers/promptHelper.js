@@ -39,11 +39,16 @@ async function getTaskType() {
 	};
 }
 
-async function getTaskTitle() {
+
+
+async function getTaskTitle(update) {
+	//Change the prompt message based on wether you are updating a task or creating a new one	
+	const message = update ? "What is your new task title ?" : "What is your task title ?"
+
 	const taskTitle = await prompt({
 		type: 'input',
 		name: 'taskTitle',
-		message: 'What is your task title?'
+		message: message
 	});
 
 	return taskTitle.taskTitle;
@@ -91,4 +96,26 @@ async function selectTaskForUpdate(tasks) {
 	return tasks[selector.selectedTask]
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate};
+//Prompt for selecting what update action to take
+async function selectUpdateActionPrompt() {
+	const selector = await prompt({
+		type: 'list',
+		message: 'What action would you like to perform?',
+		name: 'selectedUpdateAction',
+		choices: ["Mark as complete", "Delete Task", "Change Task Title"]
+	})
+
+	return selector.selectedUpdateAction
+}
+
+async function confirmDeletePrompt() {
+	const confirmDelete = await prompt({
+		type:'confirm',
+		message: 'Are you sure you want to delete this task?',
+		name: 'confirm',
+	})
+
+	return confirmDelete.confirm
+}
+
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, selectUpdateActionPrompt, confirmDeletePrompt};

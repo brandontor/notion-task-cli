@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const { Client } = require('@notionhq/client');
-const { getTaskTitle, getTaskTemplate } = require('./promptHelper')
+const { getTaskTitle, getTaskTemplate, selectUpdateActionPrompt, confirmDeletePrompt } = require('./promptHelper')
 
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
@@ -29,6 +29,10 @@ async function getDatabases() {
     spinner.fail("Unable to retrieve your databases")
     throw new Error(e)
   })
+
+  if(databases.results.length <= 0) {
+    throw new Error("There are no databases available. Please integrate a database to your notion API Key.")
+  }
 
   const databaseEnum = {}
 
@@ -71,6 +75,9 @@ async function addBlankTask(db) {
         date: {
           start: `${new Date().toISOString().substring(0, 10)}`
         }
+      },
+      Status: {
+        checkbox: false
       }
     }
   }).catch(error => {
@@ -101,6 +108,9 @@ async function addTemplateTask(db) {
             }
           }
         ]
+      },
+      Status: {
+        checkbox: false
       },
       Date: {
         date: {
@@ -139,15 +149,87 @@ async function getTasks(db) {
   return response 
 }
 
+async function markTaskComplete(task) {
+  spinner.start("Updating task ....")
 
-async function _updateTask (db) {
+  const response = await notion.pages.update({
+    page_id: task.id,
+    properties: {
+      Status: {
+        checkbox: true
+      }, 
+    }
+  }).catch(error => {
+    spinner.fail(chalk.red('Something went wrong'));
+    throw new Error(error)
+  });
 
-  if(!tasks) {
-    process.exit(1)
-  } 
-
-
+  spinner.succeed(chalk.green("Success! Here is your task: \n"))
+  return console.log(chalk.green(response.url))  
 }
-module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, _updateTask }
+
+async function deleteTask(task) {
+  const confirmDelete = await confirmDeletePrompt()
+
+  if(confirmDelete) {
+    spinner.start("Deleting task ....")
+    await notion.pages.update({
+      page_id: task.id,
+      archived: true
+    }).catch(error => {
+      spinner.fail(chalk.red('Something went wrong'));
+      throw new Error(error)
+    });
+    
+    return spinner.succeed(chalk.green("Your task was successfully deleted"))
+  } else {
+    console.log("Got it! Shutting Down ...")    
+    process.exit(0)
+  }
+ 
+}
+
+async function updateTaskTitle(task) {
+  
+  const taskTitle = await getTaskTitle(update = true)
+
+  spinner.start("Updating task title ....")
+  
+  const response = await notion.pages.update({
+    page_id: task.id,
+    properties: {
+      title: {
+        title: [
+          {
+            text: {
+              content: taskTitle
+            }
+          }
+        ]
+      },
+    }
+  }).catch(error => {
+    spinner.fail(chalk.red('Something went wrong'));
+    throw new Error(error)
+  });
+
+  spinner.succeed(chalk.green("Success! Here is your updated task: \n"))
+  return console.log(chalk.green(response.url));
+}
+
+async function updateWithSelectedAction(task) {
+
+  const updateActionTypeEnum = {
+    "Mark as complete": markTaskComplete,
+    "Delete Task": deleteTask,
+    "Change Task Title": updateTaskTitle
+  }
+
+  //Return one of ["Mark as complete", "Delete Task", "Change Task Title"]
+  const selectedUpdateAction = await selectUpdateActionPrompt()
+
+  updateActionTypeEnum[selectedUpdateAction](task)
+}
+module.exports = { getDatabases, addBlankTask, addTemplateTask, getTasks, updateWithSelectedAction }
 
 
