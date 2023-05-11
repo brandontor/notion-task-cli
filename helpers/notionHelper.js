@@ -217,7 +217,7 @@ async function updateTaskTitle(task) {
   return console.log(chalk.green(response.url));
 }
 
-async function updateWithSelectedAction (task) {
+async function updateWithSelectedAction(task) {
 
   const updateActionTypeEnum = {
     "Mark as complete": markTaskComplete,

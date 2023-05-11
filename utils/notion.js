@@ -31,7 +31,7 @@ async function readTask(db) {
 	if (tasks.results.length > 0) {
 		displayTasks(tasks)
 	} else {
-		console.log("No tasks available")
+		console.log("No tasks exist, please create a new task")
 		process.exit(0)
 	}
 
