@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const { Client } = require('@notionhq/client');
-const { getTaskTitle, getTaskTemplate, updateActionPrompt } = require('./promptHelper')
+const { getTaskTitle, getTaskTemplate, updateActionPrompt, confirmDeletePrompt } = require('./promptHelper')
 
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
@@ -169,9 +169,23 @@ async function markTaskComplete(task) {
 }
 
 async function deleteTask(task) {
-  console.log("Here is task", task)
+  const confirmDelete = await confirmDeletePrompt()
 
-  return console.log("Task Deleted")  
+  if(confirmDelete) {
+    const response = await notion.pages.update({
+      page_id: task.id,
+      archived: true
+    }).catch(error => {
+      spinner.fail(chalk.red('Something went wrong'));
+      throw new Error(error)
+    });
+    
+    return spinner.succeed(chalk.green("Your task was successfully deleted"))
+  } else {
+    console.log("Got it! Shutting Down ...")    
+    process.exit(0)
+  }
+ 
 }
 
 async function updateTaskTitle(task) {

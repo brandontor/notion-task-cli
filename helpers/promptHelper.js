@@ -102,4 +102,14 @@ async function updateActionPrompt() {
 	return selector.selectedUpdateAction
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateActionPrompt};
+async function confirmDeletePrompt() {
+	const confirmDelete = await prompt({
+		type:'confirm',
+		message: 'Are you sure you want to delete this task?',
+		name: 'confirm',
+	})
+
+	return confirmDelete.confirm
+}
+
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateActionPrompt, confirmDeletePrompt};
