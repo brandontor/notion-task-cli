@@ -172,7 +172,7 @@ async function deleteTask(task) {
   const confirmDelete = await confirmDeletePrompt()
 
   if(confirmDelete) {
-    const response = await notion.pages.update({
+    await notion.pages.update({
       page_id: task.id,
       archived: true
     }).catch(error => {
