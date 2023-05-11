@@ -172,6 +172,7 @@ async function deleteTask(task) {
   const confirmDelete = await confirmDeletePrompt()
 
   if(confirmDelete) {
+    spinner.start("Deleting task ....")
     await notion.pages.update({
       page_id: task.id,
       archived: true
@@ -189,9 +190,31 @@ async function deleteTask(task) {
 }
 
 async function updateTaskTitle(task) {
-  console.log("Here is task", task)
+  
+  const taskTitle = await getTaskTitle(update = true)
 
-  return console.log("Task Title Updated")  
+  spinner.start("Updating task title ....")
+  
+  const response = await notion.pages.update({
+    page_id: task.id,
+    properties: {
+      title: {
+        title: [
+          {
+            text: {
+              content: taskTitle
+            }
+          }
+        ]
+      },
+    }
+  }).catch(error => {
+    spinner.fail(chalk.red('Something went wrong'));
+    throw new Error(error)
+  });
+
+  spinner.succeed(chalk.green("Success! Here is your updated task: \n"))
+  return console.log(chalk.green(response.url));
 }
 
 async function updateWithSelectedAction (task) {

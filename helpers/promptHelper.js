@@ -39,11 +39,14 @@ async function getTaskType() {
 	};
 }
 
-async function getTaskTitle() {
+async function getTaskTitle(update) {
+	
+	const message = update ? "What is your new task title ?" : "What is your task title ?"
+
 	const taskTitle = await prompt({
 		type: 'input',
 		name: 'taskTitle',
-		message: 'What is your task title?'
+		message: message
 	});
 
 	return taskTitle.taskTitle;
