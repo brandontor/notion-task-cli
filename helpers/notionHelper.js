@@ -6,7 +6,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const { Client } = require('@notionhq/client');
-const { getTaskTitle, getTaskTemplate, updateActionPrompt, confirmDeletePrompt } = require('./promptHelper')
+const { getTaskTitle, getTaskTemplate, selectUpdateActionPrompt, confirmDeletePrompt } = require('./promptHelper')
 
 
 const notion = new Client({ auth: process.env.NOTION_KEY });
@@ -226,7 +226,7 @@ async function updateWithSelectedAction (task) {
   }
 
   //Return one of ["Mark as complete", "Delete Task", "Change Task Title"]
-  const selectedUpdateAction = await updateActionPrompt()
+  const selectedUpdateAction = await selectUpdateActionPrompt()
 
   updateActionTypeEnum[selectedUpdateAction](task)
 }

@@ -39,8 +39,10 @@ async function getTaskType() {
 	};
 }
 
+
+
 async function getTaskTitle(update) {
-	
+	//Change the prompt message based on wether you are updating a task or creating a new one	
 	const message = update ? "What is your new task title ?" : "What is your task title ?"
 
 	const taskTitle = await prompt({
@@ -94,7 +96,8 @@ async function selectTaskForUpdate(tasks) {
 	return tasks[selector.selectedTask]
 }
 
-async function updateActionPrompt() {
+//Prompt for selecting what update action to take
+async function selectUpdateActionPrompt() {
 	const selector = await prompt({
 		type: 'list',
 		message: 'What action would you like to perform?',
@@ -115,4 +118,4 @@ async function confirmDeletePrompt() {
 	return confirmDelete.confirm
 }
 
-module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, updateActionPrompt, confirmDeletePrompt};
+module.exports = { getTaskTitle, getTaskTemplate, getTaskType, selectDatabase, welcomePrompt, selectTaskForUpdate, selectUpdateActionPrompt, confirmDeletePrompt};
