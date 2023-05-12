@@ -28,7 +28,19 @@ const flags = {
 		type: 'boolean',
 		default:false,
 		alias: 'a',
-		desc:`add a notion task`
+		desc:`Add a notion task`
+	},
+	update: {
+		type: 'boolean',
+		default:false,
+		alias: 'u',
+		desc:`Update a notion task`
+	},
+	get: {
+		type: 'boolean',
+		default:false,
+		alias: 'g',
+		desc:`Get your notion task(s)`
 	}
 };
 

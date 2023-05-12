@@ -27,20 +27,6 @@ const templateEnum = {
 			type: 'emoji',
 			emoji: '💼'
 		}
-	},
-	'📔 Schedule/Reflection': {
-		taskGroup: ['Scheduling and Reflection'],
-		icon: {
-			type: 'emoji',
-			icon: '📔'
-		}
-	},
-	'🏢 Work': {
-		taskGroup: ['Work'],
-		icon: {
-			type: 'emoji',
-			icon: '🏢'
-		}
 	}
 };
 

@@ -77,12 +77,33 @@ const actionEnum = {
 	}
 }
 
+
+async function fetchAndSelectDatabase() {
+	let selectedDatabase
+	try {
+		const databases = await getDatabases()
+		selectedDatabase = await selectDatabase(databases)
+	} catch(e) {
+		console.log(e)
+		process.exit(1)
+	}
+
+	return selectedDatabase
+}
+
 module.exports = async function notion(flag) {
+
+	const selectedDatabase = await fetchAndSelectDatabase().catch((e) => {
+		console.log(e)
+		process.exit(1)
+	})
+
+	if(flag) {
+		return await actionEnum[flag](selectedDatabase)
+	} 
 
 	try {
 		const selectedAction = await welcomePrompt()
-		const databases = await getDatabases()
-		const selectedDatabase = await selectDatabase(databases)
 		actionEnum[selectedAction](selectedDatabase)
 	} catch (e) {
 		console.log(e)
