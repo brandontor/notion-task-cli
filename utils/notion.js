@@ -93,13 +93,15 @@ async function fetchAndSelectDatabase() {
 
 module.exports = async function notion(flag) {
 
-	const selectedDatabase = await fetchAndSelectDatabase()
+	const selectedDatabase = await fetchAndSelectDatabase().catch((e) => {
+		console.log(e)
+		process.exit(1)
+	})
 
 	if(flag) {
 		return await actionEnum[flag](selectedDatabase)
 	} 
 
-	
 	try {
 		const selectedAction = await welcomePrompt()
 		actionEnum[selectedAction](selectedDatabase)
