@@ -30,21 +30,26 @@ Please refer to these [docs](https://developers.notion.com/docs/create-a-notion-
 # Installation
 
 ```
-npm install --g ntc
+npm install notion-task-cli -g
+```
+
+You will also need to create an ENV with your notion api key
+```
+export set NOTION_KEY
 ```
 
 
 # Usage
 
 ```
-npm ntc
+npx ntc
 ```
 ### Commands
 
 
 
 ```
-npm ntc help
+npx ntc help
 ```
 # License
 
