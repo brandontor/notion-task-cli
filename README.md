@@ -1,17 +1,13 @@
-# notion-task-cli
-
-### STILL A WIP Please dont try to install yet
-
-## Table of Contents
 
 
+# Table of Contents
 
-- [notion-task-cli](#notion-task-cli)
-    - [STILL A WIP Please dont try to install yet](#still-a-wip-please-dont-try-to-install-yet)
-  - [Table of Contents](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 - [Why?](#why)
+- [Notion Setup](#notion-setup)
 - [Installation](#installation)
 - [Usage](#usage)
+    - [Commands](#commands)
 - [License](#license)
 
 
@@ -25,30 +21,36 @@ Also maybe like you, I get distracted easily, and because of this i'm afraid to 
 
 Well weary traveler look no further: Introducing notion-task-cli  (ntc) :robot:
 
+# Notion Setup
+
+In order to use this CLI you will need to generate a notion API key
+
+Please refer to these [docs](https://developers.notion.com/docs/create-a-notion-integration) on how to access your key and create a database integration. You will need at least ONE database integartion.
+
 # Installation
+
 ```
-npm install --global notion-task-cli
+npm install notion-task-cli -g
 ```
 
-In order to utilize your notion databases you will need to access your notion API key and add database integrations. 
+You will also need to create an ENV with your notion api key
+```
+export set NOTION_KEY
+```
 
-Please refer to the [docs](https://developers.notion.com/docs/create-a-notion-integration) from Notion on how to set this up.
 
 # Usage
 
 ```
-Create a .env and add your Notion API key
-You can use .env.example as a reference. 
+npx ntc
 ```
+### Commands
 
-Commands 
+
 
 ```
-npm ntc -a 
+npx ntc help
 ```
-
-This will fire up the CLI
-
 # License
 
 [(Back to top)](#table-of-contents)
