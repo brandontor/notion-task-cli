@@ -1,4 +1,5 @@
 
+![](https://github.com/brandontor/notion-task-cli/blob/readme-gif/ntc.gif)
 
 # Table of Contents
 
